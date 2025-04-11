@@ -1,66 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formulario de Contacto con ChatGPT</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 2rem; background-color: #f9f9f9; }
-    h1 { text-align: center; }
-    textarea { width: 100%; height: 100px; margin-bottom: 0.5rem; padding: 0.5rem; font-size: 1rem; }
-    button { padding: 0.6rem 1.2rem; font-size: 1rem; cursor: pointer; }
-    #response { margin-top: 1.5rem; padding: 1rem; background-color: #e9e9e9; border-radius: 8px; white-space: pre-wrap; }
-    .error { color: red; font-weight: bold; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Contacto</title>
 </head>
 <body>
+    <h1>Formulario de Contacto</h1>
+    <form id="contact-form">
+        <label for="message">Escribe tu mensaje:</label><br>
+        <textarea id="message" name="message" rows="4" cols="50" required></textarea><br><br>
+        <button type="submit">Enviar</button>
+    </form>
 
-  <h1>Formulario de Contacto con ChatGPT</h1>
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar el envío del formulario tradicional
 
-  <form id="contactForm">
-    <label for="message">Escribe tu mensaje:</label><br>
-    <textarea id="message" required placeholder="Escribe tu mensaje aquí..."></textarea><br>
-    <button type="submit">Enviar a ChatGPT</button>
-  </form>
+            const message = document.getElementById('message').value;
 
-  <div id="response"></div>
-
-  <script>
-    const form = document.getElementById('contactForm');
-    const messageInput = document.getElementById('message');
-    const responseDiv = document.getElementById('response');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userMessage = messageInput.value.trim();
-
-      if (!userMessage) {
-        responseDiv.innerHTML = "<p class='error'>Por favor, escribe un mensaje antes de enviar.</p>";
-        return;
-      }
-
-      responseDiv.innerHTML = "Cargando respuesta...";
-
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: userMessage })
+            // Hacer una solicitud POST a la URL de tu servidor backend
+            fetch('https://mi-servidor.herokuapp.com/api/chat', {  // Cambia esta URL por la de tu servidor backend
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })  // Enviar el mensaje en formato JSON
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Mostrar la respuesta del servidor (ChatGPT)
+                alert('Respuesta de ChatGPT: ' + data.reply);
+            })
+            .catch(error => {
+                console.error('Error al enviar la solicitud:', error);
+                alert('Ocurrió un error al enviar el mensaje.');
+            });
         });
-
-        const data = await res.json();
-
-        if (data.reply) {
-          responseDiv.innerHTML = `<strong>Respuesta de ChatGPT:</strong><br>${data.reply}`;
-        } else {
-          responseDiv.innerHTML = "<p class='error'>Hubo un error al obtener la respuesta.</p>";
-        }
-      } catch (err) {
-        console.error(err);
-        responseDiv.innerHTML = "<p class='error'>Ocurrió un error al conectarse con el servidor.</p>";
-      }
-    });
-  </script>
-
+    </script>
 </body>
 </html>
+
