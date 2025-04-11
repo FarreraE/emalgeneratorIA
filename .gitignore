@@ -1,0 +1,16 @@
+# Ignorar archivos sensibles
+.env
+
+# Ignorar node_modules (dependencias de Node.js que se pueden instalar nuevamente)
+node_modules/
+
+# Ignorar logs
+*.log
+
+# Ignorar archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de configuración de editor (opcional)
+.idea/
+.vscode/
