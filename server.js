@@ -1,46 +1,37 @@
-// server.js
-require('dotenv').config(); // Cargar las variables de entorno desde el archivo .env
-const express = require('express');
-const axios = require('axios');
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import { OpenAI } from "openai";
+
+dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000; // Puerto de la aplicación
+const port = 3000;
 
-// Middleware para manejar datos JSON en las solicitudes
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+app.use(cors());
 app.use(express.json());
-app.use(express.static('public')); // Servir archivos estáticos (HTML, CSS, JS)
+app.use(express.static(".")); // Sirve index.html y script.js desde raíz
 
-// Endpoint para manejar el formulario de contacto
-app.post('/api/chat', async (req, res) => {
-  const userMessage = req.body.message; // Obtener el mensaje del usuario
-
-  // Verificar que se haya enviado un mensaje
-  if (!userMessage) {
-    return res.status(400).json({ error: 'Se debe enviar un mensaje' });
-  }
+app.post("/api/chat", async (req, res) => {
+  const userMessage = req.body.message;
 
   try {
-    // Solicitar respuesta de ChatGPT (OpenAI) usando la clave de API
-    const openaiResponse = await axios.post('https://api.openai.com/v1/completions', {
-      model: 'gpt-3.5-turbo', // Modelo de GPT que deseas usar
-      messages: [{ role: 'user', content: userMessage }],
-      max_tokens: 150, // Tamaño máximo de la respuesta
-    }, {
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, // Usar la clave API de OpenAI
-        'Content-Type': 'application/json'
-      }
+    const chat = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo", // Puedes usar "gpt-4" si tienes acceso
+      messages: [{ role: "user", content: userMessage }],
     });
 
-    // Enviar la respuesta de OpenAI al cliente
-    res.json({ reply: openaiResponse.data.choices[0].message.content });
+    res.json({ response: chat.choices[0].message.content });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener la respuesta de ChatGPT' });
+    console.error("Error:", error.message);
+    res.status(500).json({ error: "Error al conectar con OpenAI." });
   }
 });
 
-// Iniciar el servidor
 app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
+  console.log(`Servidor en http://localhost:${port}`);
 });
