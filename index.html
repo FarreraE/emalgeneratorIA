@@ -1,43 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Contacto</title>
+  <meta charset="UTF-8" />
+  <title>ChatGPT Web</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; }
+    #chat { max-width: 600px; margin: auto; }
+    .msg { margin: 1em 0; }
+    .user { font-weight: bold; }
+    .gpt { color: green; }
+  </style>
 </head>
 <body>
-    <h1>Formulario de Contacto</h1>
-    <form id="contact-form">
-        <label for="message">Escribe tu mensaje:</label><br>
-        <textarea id="message" name="message" rows="4" cols="50" required></textarea><br><br>
-        <button type="submit">Enviar</button>
-    </form>
+  <div id="chat">
+    <h2>ChatGPT</h2>
+    <div id="messages"></div>
+    <input type="text" id="input" placeholder="Escribe un mensaje" />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
 
-    <script>
-        document.getElementById('contact-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Evitar el envío del formulario tradicional
-
-            const message = document.getElementById('message').value;
-
-            // Hacer una solicitud POST a la URL de tu servidor backend
-            fetch('https://mi-servidor.herokuapp.com/api/chat', {  // Cambia esta URL por la de tu servidor backend
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message: message })  // Enviar el mensaje en formato JSON
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Mostrar la respuesta del servidor (ChatGPT)
-                alert('Respuesta de ChatGPT: ' + data.reply);
-            })
-            .catch(error => {
-                console.error('Error al enviar la solicitud:', error);
-                alert('Ocurrió un error al enviar el mensaje.');
-            });
-        });
-    </script>
+  <script src="script.js"></script>
 </body>
 </html>
+
 
