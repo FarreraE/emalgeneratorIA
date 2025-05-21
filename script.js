@@ -1,18 +1,21 @@
 async function sendMessage() {
   const input = document.getElementById("input");
-  const messages = document.getElementById("messages");
+  const output = document.getElementById("output");
   const userText = input.value.trim();
   if (!userText) return;
 
-  messages.innerHTML += `<div class="msg"><span class="user">Tú:</span> ${userText}</div>`;
-  input.value = "";
+  output.value = "Reformulando...";
 
-  const response = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: userText }),
-  });
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: userText }),
+    });
 
-  const data = await response.json();
-  messages.innerHTML += `<div class="msg"><span class="gpt">GPT:</span> ${data.response}</div>`;
+    const data = await response.json();
+    output.value = data.response;
+  } catch (error) {
+    output.value = "Ocurrió un error al conectar con el servidor.";
+  }
 }
