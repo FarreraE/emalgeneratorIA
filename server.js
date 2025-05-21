@@ -6,7 +6,7 @@ import { OpenAI } from "openai";
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -14,24 +14,24 @@ const openai = new OpenAI({
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(".")); // Sirve index.html y script.js desde raíz
+app.use(express.static(".")); // Sirve index.html y script.js desde raíz (opcional)
 
 app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
 
   try {
     const chat = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // Puedes usar "gpt-4" si tienes acceso
-     messages: [
-  {
-    role: "system",
-    content: `Eres un experto en redacción profesional. Tu tarea es tomar el mensaje del usuario y reescribirlo para que sea claro, directo, profesional, cordial, y bien estructurado. No inventes nueva información, solo mejora la redacción.`,
-  },
-  {
-    role: "user",
-    content: `Mensaje original:\n\n${userMessage}`,
-  },
-],
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: `Eres un experto en redacción profesional. Tu tarea es tomar el mensaje del usuario y reescribirlo para que sea claro, directo, profesional, cordial, y bien estructurado. No inventes nueva información, solo mejora la redacción.`,
+        },
+        {
+          role: "user",
+          content: `Mensaje original:\n\n${userMessage}`,
+        },
+      ],
     });
 
     res.json({ response: chat.choices[0].message.content });
@@ -42,5 +42,5 @@ app.post("/api/chat", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Servidor en http://localhost:${port}`);
+  console.log(`Servidor escuchando en puerto ${port}`);
 });
