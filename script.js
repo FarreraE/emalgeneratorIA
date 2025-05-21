@@ -7,7 +7,7 @@ async function sendMessage() {
   output.value = "Reformulando...";
 
   try {
-    const response = await fetch("/api/chat", {
+    const response = await fetch("emalgeneratoria-production.up.railway.app", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: userText }),
