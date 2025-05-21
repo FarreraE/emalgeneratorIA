@@ -22,7 +22,16 @@ app.post("/api/chat", async (req, res) => {
   try {
     const chat = await openai.chat.completions.create({
       model: "gpt-3.5-turbo", // Puedes usar "gpt-4" si tienes acceso
-      messages: [{ role: "user", content: userMessage }],
+     messages: [
+  {
+    role: "system",
+    content: `Eres un experto en redacción profesional. Tu tarea es tomar el mensaje del usuario y reescribirlo para que sea claro, directo, profesional, cordial, y bien estructurado. No inventes nueva información, solo mejora la redacción.`,
+  },
+  {
+    role: "user",
+    content: `Mensaje original:\n\n${userMessage}`,
+  },
+],
     });
 
     res.json({ response: chat.choices[0].message.content });
