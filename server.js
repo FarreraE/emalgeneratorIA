@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(".")); // Sirve index.html y script.js desde raíz
 
-app.post("emalgeneratoria-production.up.railway.app", async (req, res) => {
+app.post("https://emalgeneratoria-production.up.railway.app", async (req, res) => {
   const userMessage = req.body.message;
 
   try {
